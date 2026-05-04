@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Learn Claude Code — Beginner's Guide</title>
+  <style>
+    :root {
+      --orange: #e8612c;
+      --orange-light: #fff4ef;
+      --orange-border: #f5c4ad;
+      --dark: #1a1a1a;
+      --mid: #444;
+      --light: #f7f7f7;
+      --white: #ffffff;
+      --green: #16a34a;
+      --green-light: #f0fdf4;
+      --blue: #2563eb;
+      --blue-light: #eff6ff;
+      --code-bg: #1e1e2e;
+      --code-text: #cdd6f4;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--light);
+      color: var(--dark);
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--white);
+      border-bottom: 1px solid #e5e5e5;
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--dark);
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--orange);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 16px;
+    }
+
+    .progress-header {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .progress-header span {
+      color: var(--orange);
+      font-weight: 600;
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 48px 20px 40px;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 32px;
+    }
+
+    .hero-emoji { font-size: 48px; margin-bottom: 16px; }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 16px;
+      color: var(--mid);
+      max-width: 480px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+
+    .start-btn {
+      background: var(--orange);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 14px 32px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .start-btn:hover { background: #d4501f; transform: translateY(-1px); }
+    .start-btn:active { transform: translateY(0); }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .progress-bar-bg {
+      height: 6px;
+      background: #e5e5e5;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--orange);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      color: #888;
+      margin-top: 6px;
+      text-align: right;
+    }
+
+    /* ── Lesson card ── */
+    .lesson {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .lesson.active { display: block; }
+
+    .lesson-header {
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .lesson-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .lesson-num.done {
+      background: var(--green);
+    }
+
+    .lesson-title-wrap h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+
+    .lesson-title-wrap p {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .lesson-body {
+      padding: 24px;
+    }
+
+    .lesson-body p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--mid);
+      margin-bottom: 16px;
+    }
+
+    .lesson-body p:last-of-type { margin-bottom: 0; }
+
+    /* ── Callout boxes ── */
+    .callout {
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin: 16px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .callout-tip {
+      background: var(--blue-light);
+      border-left: 4px solid var(--blue);
+      color: #1e3a6e;
+    }
+
+    .callout-warning {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      color: #78350f;
+    }
+
+    .callout-success {
+      background: var(--green-light);
+      border-left: 4px solid var(--green);
+      color: #14532d;
+    }
+
+    .callout strong { font-weight: 700; }
+
+    /* ── Code blocks ── */
+    .code-block {
+      background: var(--code-bg);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 16px 0;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+      font-size: 14px;
+      color: var(--code-text);
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .code-block .prompt {
+      color: #a6e3a1;
+      user-select: none;
+    }
+
+    .code-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      border-radius: 6px;
+      color: #aaa;
+      font-size: 12px;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .copy-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+
+    /* ── Command cards ── */
+    .command-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    @media (max-width: 560px) {
+      .command-grid { grid-template-columns: 1fr; }
+    }
+
+    .command-card {
+      background: var(--light);
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .command-card code {
+      display: block;
+      font-family: "SF Mono", monospace;
+      font-size: 13px;
+      background: var(--code-bg);
+      color: #a6e3a1;
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .command-card p {
+      font-size: 13px;
+      color: var(--mid);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* ── Try it box ── */
+    .try-it {
+      background: var(--orange-light);
+      border: 1px solid var(--orange-border);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin: 20px 0;
+    }
+
+    .try-it-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--orange);
+      margin-bottom: 8px;
+    }
+
+    .try-it p {
+      font-size: 14px;
+      color: #7a3010;
+      margin: 0;
+      line-height: 1.6;
+    }
+
+    /* ── Checklist ── */
+    .checklist {
+      list-style: none;
+      margin: 16px 0;
+    }
+
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 15px;
+      color: var(--mid);
+      line-height: 1.5;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .checklist li:last-child { border-bottom: none; }
+
+    .check-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--green);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* ── Nav buttons ── */
+    .lesson-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .btn-back {
+      background: none;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px 20px;
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .btn-back:hover { border-color: #aaa; }
+
+    .btn-next {
+      background: var(--orange);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .btn-next:hover { background: #d4501f; transform: translateY(-1px); }
+
+    /* ── Final screen ── */
+    .final {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 48px 32px;
+      text-align: center;
+      display: none;
+    }
+
+    .final.active { display: block; }
+
+    .final h2 {
+      font-size: 26px;
+      font-weight: 800;
+      margin: 16px 0 12px;
+    }
+
+    .final p {
+      font-size: 16px;
+      color: var(--mid);
+      max-width: 460px;
+      margin: 0 auto 28px;
+      line-height: 1.6;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 60px;
+      margin-bottom: 8px;
+    }
+
+    .final-links {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .final-link {
+      background: var(--orange);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      padding: 12px 22px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+
+    .final-link:hover { background: #d4501f; }
+
+    .final-link.secondary {
+      background: none;
+      border: 1px solid #ddd;
+      color: var(--mid);
+    }
+
+    .final-link.secondary:hover { border-color: #aaa; background: var(--light); }
+
+    .restart-btn {
+      display: inline-block;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #aaa;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚡</div>
+    Learn Claude Code
+  </div>
+  <div class="progress-header" id="header-progress" style="display:none">
+    Lesson <span id="header-current">1</span> of <span id="header-total">6</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Hero -->
+  <div class="hero" id="hero">
+    <div class="hero-emoji">⚡</div>
+    <h1>Learn Claude Code<br/>in 6 easy lessons</h1>
+    <p>Never written a line of code? No problem. This guide will walk you through Claude Code — Anthropic's AI coding tool — one simple step at a time.</p>
+    <button class="start-btn" onclick="startLessons()">Start Learning →</button>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-label" id="progress-label">Lesson 1 of 6</div>
+  </div>
+
+  <!-- ─── Lesson 1: What is Claude Code? ─── -->
+  <div class="lesson" id="lesson-1">
+    <div class="lesson-header">
+      <div class="lesson-num" id="num-1">1</div>
+      <div class="lesson-title-wrap">
+        <h2>What is Claude Code?</h2>
+        <p>Understanding the tool before you use it</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+      <p>
+        <strong>Claude Code</strong> is an AI assistant made by Anthropic that lives in your computer's <strong>terminal</strong> (a text-based window where you type commands). Instead of clicking buttons, you just <em>talk to it in plain English</em> and it writes, edits, or explains code for you.
+      </p>
+
+      <div class="callout callout-tip">
+        <strong>💡 Think of it like this:</strong> Imagine having a super-smart coding friend sitting next to you. You say "build me a to-do list app" and they just… do it. That's Claude Code.
+      </div>
+
+      <p>Here's what Claude Code can do for you:</p>
+
+      <ul class="checklist">
+        <li><span class="check-icon">✓</span> Write entire programs from scratch based on your description</li>
+        <li><span class="check-icon">✓</span> Fix bugs in existing code you paste to it</li>
+        <li><span class="check-icon">✓</span> Explain what any piece of code does, in plain English</li>
+        <li><span class="check-icon">✓</span> Read files on your computer and make changes to them</li>
+        <li><span class="check-icon">✓</span> Run shell commands on your behalf</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <strong>⚠️ Heads up:</strong> Claude Code runs in your terminal and can read and modify files. Always review what it plans to do before saying "yes."
+      </div>
+    </div>
+    <div class="lesson-nav">
+      <span></span>
+      <button class="btn-next" onclick="goTo(2)">Next: Installation →</button>
+    </div>
+  </div>
+
+  <!-- ─── Lesson 2: Installation ─── -->
+  <div class="lesson" id="lesson-2">
+    <div class="lesson-header">
+      <div class="lesson-num" id="num-2">2</div>
+      <div class="lesson-title-wrap">
+        <h2>Installing Claude Code</h2>
+        <p>Getting it onto your computer — takes about 5 minutes</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <p>Before you can use Claude Code, you need to install two things: <strong>Node.js</strong> (a tool that lets your computer run JavaScript programs) and then <strong>Claude Code</strong> itself.</p>
+
+      <p><strong>Step 1 — Install Node.js</strong></p>
+      <p>Go to <strong>nodejs.org</strong> and download the version marked "LTS" (Long Term Support). Run the installer just like any other app.</p>
+
+      <p><strong>Step 2 — Open your Terminal</strong></p>
+      <ul class="checklist">
+        <li><span class="check-icon">✓</span><span><strong>Mac:</strong> Press ⌘ + Space, type "Terminal", hit Enter</span></li>
+        <li><span class="check-icon">✓</span><span><strong>Windows:</strong> Press the Windows key, type "PowerShell", hit Enter</span></li>
+      </ul>
+
+      <p><strong>Step 3 — Install Claude Code</strong></p>
+      <p>Type this into your terminal and press Enter:</p>
+
+      <div class="code-block">
+        <div class="code-label">📋 Terminal — paste this exactly</div>
+        <button class="copy-btn" onclick="copyCode(this, 'npm install -g @anthropic-ai/claude-code')">Copy</button>
+        <pre><span class="prompt">$ </span>npm install -g @anthropic-ai/claude-code</pre>
+      </div>
+
+      <div class="callout callout-tip">
+        <strong>💡 What does this mean?</strong> <code>npm</code> is Node's package manager — it downloads and installs programs. <code>install -g</code> means "install globally" (so it works from anywhere). <code>@anthropic-ai/claude-code</code> is the name of the program.
+      </div>
+
+      <p><strong>Step 4 — Verify it worked</strong></p>
+      <p>Type this and press Enter:</p>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this, 'claude --version')">Copy</button>
+        <pre><span class="prompt">$ </span>claude --version</pre>
+      </div>
+
+      <p>If you see a version number (like <code style="color:#888">1.x.x</code>), you're all set!</p>
+
+      <div class="callout callout-success">
+        <strong>✅ You'll also need an Anthropic account.</strong> When you first run Claude Code, it will ask you to log in at <strong>claude.ai</strong>. Sign up there if you haven't already.
+      </div>
+    </div>
+    <div class="lesson-nav">
+      <button class="btn-back" onclick="goTo(1)">← Back</button>
+      <button class="btn-next" onclick="goTo(3)">Next: Your First Command →</button>
+    </div>
+  </div>
+
+  <!-- ─── Lesson 3: Starting Claude Code ─── -->
+  <div class="lesson" id="lesson-3">
+    <div class="lesson-header">
+      <div class="lesson-num" id="num-3">3</div>
+      <div class="lesson-title-wrap">
+        <h2>Starting Claude Code</h2>
+        <p>How to open it and what you'll see</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <p>To start Claude Code, open your terminal, navigate to a folder you want to work in, and type:</p>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this, 'claude')">Copy</button>
+        <pre><span class="prompt">$ </span>claude</pre>
+      </div>
+
+      <p>That's it! Just the word <code style="color:#888">claude</code>. You'll see a welcome screen and a prompt where you can start talking to it.</p>
+
+      <div class="callout callout-tip">
+        <strong>💡 Where you run it matters.</strong> Claude Code can see and edit files in whatever folder your terminal is currently in. To work on a project, navigate to that project's folder first.
+      </div>
+
+      <p><strong>Navigating to a folder</strong></p>
+      <p>Use the <code style="color:#888">cd</code> command ("change directory") to move around:</p>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this, 'cd Desktop\ncd my-project')">Copy</button>
+        <pre><span class="prompt">$ </span>cd Desktop          <span style="color:#585b70"># go to your Desktop</span>
+<span class="prompt">$ </span>cd my-project       <span style="color:#585b70"># go into a folder called my-project</span>
+<span class="prompt">$ </span>cd ..               <span style="color:#585b70"># go back up one level</span></pre>
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">🎯 Try it</div>
+        <p>Open your terminal, type <strong>claude</strong>, and press Enter. Once you see the Claude Code prompt, type: <em>"Hello! What can you help me with?"</em> — just like a text message.</p>
+      </div>
+
+      <p>To exit Claude Code at any time, type <code style="color:#888">/exit</code> and press Enter, or press <strong>Ctrl + C</strong>.</p>
+
+    </div>
+    <div class="lesson-nav">
+      <button class="btn-back" onclick="goTo(2)">← Back</button>
+      <button class="btn-next" onclick="goTo(4)">Next: Basic Commands →</button>
+    </div>
+  </div>
+
+  <!-- ─── Lesson 4: Basic Commands ─── -->
+  <div class="lesson" id="lesson-4">
+    <div class="lesson-header">
+      <div class="lesson-num" id="num-4">4</div>
+      <div class="lesson-title-wrap">
+        <h2>Basic Commands to Know</h2>
+        <p>The most useful things you can type</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <p>Inside Claude Code, you can do two kinds of things: <strong>chat naturally</strong> (just type what you want) or use <strong>slash commands</strong> (special shortcuts that start with <code style="color:#888">/</code>).</p>
+
+      <p><strong>Slash Commands — Quick Reference</strong></p>
+
+      <div class="command-grid">
+        <div class="command-card">
+          <code>/help</code>
+          <p>Shows a list of all available commands. Great when you're stuck.</p>
+        </div>
+        <div class="command-card">
+          <code>/clear</code>
+          <p>Clears the current conversation and starts fresh. Like a clean slate.</p>
+        </div>
+        <div class="command-card">
+          <code>/exit</code>
+          <p>Closes Claude Code and returns you to the normal terminal.</p>
+        </div>
+        <div class="command-card">
+          <code>/compact</code>
+          <p>Summarizes the conversation to free up memory during long sessions.</p>
+        </div>
+        <div class="command-card">
+          <code>/status</code>
+          <p>Shows info about your current session — what model, usage, etc.</p>
+        </div>
+        <div class="command-card">
+          <code>/vim</code>
+          <p>Switches to a vim-style editor mode for more advanced text editing.</p>
+        </div>
+      </div>
+
+      <p>You can also start Claude Code directly with a question using the <code style="color:#888">-p</code> flag, without entering the interactive mode:</p>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this, 'claude -p &quot;What does this error mean: Cannot read properties of undefined&quot;')">Copy</button>
+        <pre><span class="prompt">$ </span>claude -p <span style="color:#f9e2af">"What does this error mean: Cannot read properties of undefined"</span></pre>
+      </div>
+
+      <div class="callout callout-tip">
+        <strong>💡 Pro tip:</strong> The <code>-p</code> flag ("print") is great when you just have a quick question. Claude answers and you're back at the terminal immediately.
+      </div>
+
+    </div>
+    <div class="lesson-nav">
+      <button class="btn-back" onclick="goTo(3)">← Back</button>
+      <button class="btn-next" onclick="goTo(5)">Next: Writing Good Prompts →</button>
+    </div>
+  </div>
+
+  <!-- ─── Lesson 5: Prompting Tips ─── -->
+  <div class="lesson" id="lesson-5">
+    <div class="lesson-header">
+      <div class="lesson-num" id="num-5">5</div>
+      <div class="lesson-title-wrap">
+        <h2>How to Ask Claude for Help</h2>
+        <p>Getting better answers with better questions</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <p>Claude Code is smart, but the clearer you are, the better results you'll get. Here are the most important things to know:</p>
+
+      <p><strong>✅ Be specific about what you want</strong></p>
+
+      <div class="code-block">
+        <div class="code-label">❌ Too vague</div>
+        <pre><span style="color:#f38ba8">Make a website</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">✅ Much better</div>
+        <pre><span style="color:#a6e3a1">Create a single HTML file for a personal portfolio page.
+It should have my name at the top, a short bio section,
+and a list of 3 projects with links. Keep it simple and clean.</span></pre>
+      </div>
+
+      <p><strong>✅ Tell it the language or tool if you know it</strong></p>
+      <p>If you want Python, say "in Python." If you want it to use React, say so. If you don't know, just say "whatever's simplest."</p>
+
+      <p><strong>✅ Ask follow-up questions</strong></p>
+      <p>You don't have to get it right in one message. Say things like:</p>
+
+      <div class="code-block">
+        <pre><span style="color:#cdd6f4">"Can you make the button blue instead?"
+"Add a search bar to the top."
+"Explain what that last piece of code does."
+"That didn't work — here's the error: ..."</span></pre>
+      </div>
+
+      <div class="try-it">
+        <div class="try-it-label">🎯 Try it</div>
+        <p>Start Claude Code and ask it: <strong>"Create a simple Python script that asks me for my name and then says hello to me."</strong> Watch it write the whole thing for you!</p>
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>⚠️ Always review before confirming.</strong> When Claude wants to create or edit files, it will ask for your permission. Take a second to read what it plans to do before saying yes.
+      </div>
+
+    </div>
+    <div class="lesson-nav">
+      <button class="btn-back" onclick="goTo(4)">← Back</button>
+      <button class="btn-next" onclick="goTo(6)">Next: Your First Real Project →</button>
+    </div>
+  </div>
+
+  <!-- ─── Lesson 6: First Project ─── -->
+  <div class="lesson" id="lesson-6">
+    <div class="lesson-header">
+      <div class="lesson-num" id="num-6">6</div>
+      <div class="lesson-title-wrap">
+        <h2>Your First Real Project</h2>
+        <p>Build something from scratch with Claude Code</p>
+      </div>
+    </div>
+    <div class="lesson-body">
+
+      <p>Let's put it all together. Follow these steps to build a real, working app with Claude Code — even if you've never written code before.</p>
+
+      <p><strong>Step 1 — Create a project folder</strong></p>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this, 'mkdir my-first-app\ncd my-first-app\nclaude')">Copy</button>
+        <pre><span class="prompt">$ </span>mkdir my-first-app   <span style="color:#585b70"># creates a new folder</span>
+<span class="prompt">$ </span>cd my-first-app      <span style="color:#585b70"># moves into that folder</span>
+<span class="prompt">$ </span>claude               <span style="color:#585b70"># starts Claude Code</span></pre>
+      </div>
+
+      <p><strong>Step 2 — Ask Claude to build something</strong></p>
+      <p>Try one of these beginner-friendly prompts:</p>
+
+      <div class="code-block">
+        <pre><span style="color:#a6e3a1">"Build a simple to-do list app using HTML, CSS, and JavaScript.
+It should let me type a task, press Enter to add it, and click
+a task to mark it as done. Save everything in one file called index.html."</span></pre>
+      </div>
+
+      <p><strong>Step 3 — Review and approve</strong></p>
+      <p>Claude will show you what it plans to create. Read through it and type <strong>yes</strong> (or press Enter) to let it proceed.</p>
+
+      <p><strong>Step 4 — Open your app!</strong></p>
+      <p>Once Claude is done, open the <code style="color:#888">index.html</code> file in your browser — just double-click it in Finder or File Explorer. You built an app!</p>
+
+      <div class="callout callout-success">
+        <strong>🎉 You're a developer now.</strong> Seriously. The hard part isn't writing code anymore — it's knowing what to build and how to ask for it. You just did both.
+      </div>
+
+      <p><strong>What to try next:</strong></p>
+      <ul class="checklist">
+        <li><span class="check-icon">✓</span>Ask Claude to "add a way to delete tasks" to your to-do app</li>
+        <li><span class="check-icon">✓</span>Ask "explain what each part of this code does"</li>
+        <li><span class="check-icon">✓</span>Try building something of your own — describe any small tool you wish you had</li>
+        <li><span class="check-icon">✓</span>Read the official docs at <strong>docs.claude.ai</strong></li>
+      </ul>
+
+    </div>
+    <div class="lesson-nav">
+      <button class="btn-back" onclick="goTo(5)">← Back</button>
+      <button class="btn-next" onclick="finish()">Complete the Course 🎉</button>
+    </div>
+  </div>
+
+  <!-- ─── Final Screen ─── -->
+  <div class="final" id="final">
+    <div class="badge">🏆</div>
+    <h2>You finished the course!</h2>
+    <p>You now know how to install Claude Code, navigate the terminal, use basic commands, write good prompts, and build your first app. That's huge.</p>
+
+    <div class="callout callout-success" style="text-align:left; max-width:480px; margin:0 auto 24px;">
+      <strong>Quick reference — commands to remember:</strong><br/>
+      <code style="color:#555">claude</code> — start Claude Code<br/>
+      <code style="color:#555">claude -p "question"</code> — quick one-off question<br/>
+      <code style="color:#555">/help</code> — see all commands<br/>
+      <code style="color:#555">/clear</code> — start fresh<br/>
+      <code style="color:#555">/exit</code> — quit
+    </div>
+
+    <div class="final-links">
+      <a href="https://docs.anthropic.com/en/docs/claude-code/overview" target="_blank" class="final-link">📚 Official Docs</a>
+      <a href="https://github.com" target="_blank" class="final-link secondary">⭐ Star on GitHub</a>
+    </div>
+    <button class="restart-btn" onclick="restart()">↩ Start over from the beginning</button>
+  </div>
+
+</div><!-- end container -->
+
+<script>
+  const TOTAL = 6;
+  let current = 0;
+
+  function startLessons() {
+    document.getElementById('hero').style.display = 'none';
+    document.getElementById('progress-wrap').style.display = 'block';
+    document.getElementById('header-progress').style.display = 'block';
+    document.getElementById('header-total').textContent = TOTAL;
+    goTo(1);
+  }
+
+  function goTo(n) {
+    // Hide all lessons
+    for (let i = 1; i <= TOTAL; i++) {
+      document.getElementById('lesson-' + i).classList.remove('active');
+    }
+    document.getElementById('final').classList.remove('active');
+
+    // Mark previous lessons as done
+    for (let i = 1; i < n; i++) {
+      document.getElementById('num-' + i).classList.add('done');
+      document.getElementById('num-' + i).textContent = '✓';
+    }
+    if (n <= TOTAL) {
+      document.getElementById('num-' + n).classList.remove('done');
+      document.getElementById('num-' + n).textContent = n;
+    }
+
+    document.getElementById('lesson-' + n).classList.add('active');
+    current = n;
+    updateProgress(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function finish() {
+    for (let i = 1; i <= TOTAL; i++) {
+      document.getElementById('lesson-' + i).classList.remove('active');
+    }
+    document.getElementById('final').classList.add('active');
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-label').textContent = 'Course complete! 🎉';
+    document.getElementById('header-progress').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function restart() {
+    document.getElementById('final').classList.remove('active');
+    document.getElementById('hero').style.display = 'block';
+    document.getElementById('progress-wrap').style.display = 'none';
+    document.getElementById('header-progress').style.display = 'none';
+    for (let i = 1; i <= TOTAL; i++) {
+      const num = document.getElementById('num-' + i);
+      num.classList.remove('done');
+      num.textContent = i;
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress(n) {
+    const pct = Math.round(((n - 1) / TOTAL) * 100);
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = 'Lesson ' + n + ' of ' + TOTAL;
+    document.getElementById('header-current').textContent = n;
+  }
+
+  function copyCode(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
